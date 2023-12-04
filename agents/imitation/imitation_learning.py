@@ -4,29 +4,25 @@ import os
 
 import scipy
 
-# import tensorflow as tf
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
-
+import tensorflow as tf
 import numpy as np
 
-# slim = tf.contrib.slim
-slim = tf.compat.v1.estimator
+slim = tf.contrib.slim
 
-from carla_py.agents.navigation.basic_agent import BasicAgent
+from carla.agent import Agent
+from carla.carla_server_pb2 import Control
 from agents.imitation.imitation_learning_network import load_imitation_learning_network
 
 
-class ImitationLearning(BasicAgent):
+class ImitationLearning(Agent):
 
-    def __init__(self, vehicle, city_name, avoid_stopping, memory_fraction=0.25, image_cut=[115, 510]):
+    def __init__(self, city_name, avoid_stopping, memory_fraction=0.25, image_cut=[115, 510]):
 
-        BasicAgent.__init__(self, vehicle, target_speed=30)
+        Agent.__init__(self)
 
         self.dropout_vec = [1.0] * 8 + [0.7] * 2 + [0.5] * 2 + [0.5] * 1 + [0.5, 1.] * 5
 
-        # config_gpu = tf.ConfigProto()
-        config_gpu = tf.compat.v1.ConfigProto()
+        config_gpu = tf.ConfigProto()
 
         # GPU to be selected, just take zero , select GPU  with CUDA_VISIBLE_DEVICES
 
