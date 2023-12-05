@@ -1,21 +1,30 @@
+from __future__ import print_function
+
 import numpy as np
+
 import tensorflow as tf
+
 
 def weight_ones(shape, name):
     initial = tf.constant(1.0, shape=shape, name=name)
     return tf.Variable(initial)
 
+
 def weight_xavi_init(shape, name):
-    initial = tf.Variable(tf.keras.initializers.GlorotUniform()(shape), name=name)
+    initial = tf.get_variable(name=name, shape=shape,
+                              initializer=tf.contrib.layers.xavier_initializer())
     return initial
+
 
 def bias_variable(shape, name):
     initial = tf.constant(0.1, shape=shape, name=name)
     return tf.Variable(initial)
 
+
 class Network(object):
 
     def __init__(self, dropout, image_shape):
+        """ We put a few counters to see how many times we called each function """
         self._dropout_vec = dropout
         self._image_shape = image_shape
         self._count_conv = 0
@@ -30,6 +39,8 @@ class Network(object):
         self._conv_strides = []
         self._weights = {}
         self._features = {}
+
+    """ Our conv is currently using bias """
 
     def conv(self, x, kernel_size, stride, output_size, padding_in='SAME'):
         self._count_conv += 1
@@ -59,7 +70,9 @@ class Network(object):
 
     def bn(self, x):
         self._count_bn += 1
-        return tf.keras.layers.BatchNormalization()(x, training=False)
+        return tf.contrib.layers.batch_norm(x, is_training=False,
+                                            updates_collections=None,
+                                            scope='bn' + str(self._count_bn))
 
     def activation(self, x):
         self._count_activations += 1
@@ -81,11 +94,7 @@ class Network(object):
         weights = weight_xavi_init(shape, 'W_f_' + str(self._count_fc))
         bias = bias_variable([output_size], name='B_f_' + str(self._count_fc))
 
-        return tf.keras.layers.Dense(output_size, activation=None, use_bias=True,
-                                    kernel_initializer=tf.keras.initializers.GlorotUniform(),
-                                    bias_initializer=tf.constant_initializer(0.1),
-                                    name='fc_' + str(self._count_fc))(x)
-
+        return tf.nn.xw_plus_b(x, weights, bias, name='fc_' + str(self._count_fc))
 
     def conv_block(self, x, kernel_size, stride, output_size, padding_in='SAME'):
         print(" === Conv", self._count_conv, "  :  ", kernel_size, stride, output_size)

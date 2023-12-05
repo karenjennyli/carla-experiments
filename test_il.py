@@ -2,7 +2,7 @@
 import sys
 
 try:
-    sys.path.append('/home/karenli/carla/PythonAPI/carla/dist/carla-0.9.14-py3.8-linux-x86_64.egg')
+    sys.path.append('/home/karenli/carla/PythonAPI/carla/dist/carla-0.9.14-py3.6-linux-x86_64.egg')
 except IndexError:
     print('Error: CARLA PythonAPI not found.')
     pass
