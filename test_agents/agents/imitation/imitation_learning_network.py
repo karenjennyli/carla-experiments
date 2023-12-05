@@ -2,9 +2,7 @@ from __future__ import print_function
 
 import numpy as np
 
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
-
+import tensorflow as tf
 
 
 def weight_ones(shape, name):
@@ -13,11 +11,8 @@ def weight_ones(shape, name):
 
 
 def weight_xavi_init(shape, name):
-    # initial = tf.get_variable(name=name, shape=shape,
-    #                           initializer=tf.contrib.layers.xavier_initializer())
     initial = tf.get_variable(name=name, shape=shape,
-                              initializer=tf.compat.v1.estimator.layers.xavier_initializer())
-
+                              initializer=tf.contrib.layers.xavier_initializer())
     return initial
 
 

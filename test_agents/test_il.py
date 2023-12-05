@@ -58,5 +58,5 @@ vehicle_bp = bp_lib.find('vehicle.lincoln.mkz_2020')
 vehicle = world.try_spawn_actor(vehicle_bp, spawn_point_start)
 
 # create imitation learning agent
-self.agent = ImitationLearning(vehicle=vehicle, city_name='Town01', avoid_stopping=False)
+agent = ImitationLearning(vehicle=vehicle, city_name='Town01', avoid_stopping=False)
 print('created')
