@@ -8,14 +8,6 @@ except IndexError:
     pass
 
 import carla
-import random 
-
-import os
-
-import scipy
-
-import tensorflow as tf
-import numpy as np
 
 # import agent
 from agents.imitation.imitation_learning import ImitationLearningAgent
@@ -41,22 +33,31 @@ for i, spawn_point in enumerate(spawn_points):
     world.debug.draw_arrow(spawn_point.location, spawn_point.location + spawn_point.get_forward_vector(), life_time=100)
 
 # Start and end spawn points for right turn
-spawn_point_start = spawn_points[18]
-spawn_point_end = spawn_points[148]
+starting_point = spawn_points[18]
+destination_point = spawn_points[148]
 
 # Retrieve the spectator object
 spectator = world.get_spectator()
 
 # Set the spectator location
-location = spawn_point_start.location
+location = starting_point.location
 spectator.set_location(location + carla.Location(z=50))
 
 # Get the blueprint for the vehicle you want
 vehicle_bp = bp_lib.find('vehicle.lincoln.mkz_2020') 
 
 # Try spawning the vehicle at a randomly chosen spawn point
-vehicle = world.try_spawn_actor(vehicle_bp, spawn_point_start)
+vehicle = world.try_spawn_actor(vehicle_bp, starting_point)
 
 # create imitation learning agent
-agent = ImitationLearningAgent(vehicle)
-print('created')
+agent = ImitationLearningAgent(vehicle, city_name, avoid_stopping=False)
+
+# set the agent destination
+agent.set_destination(destination_point.location)
+
+# set the vehicle autopilot
+while True:
+    if agent.done():
+        print("The target has been reached, stopping the simulation")
+        break
+    vehicle.apply_control(agent.run_step())

@@ -9,16 +9,16 @@ import numpy as np
 
 slim = tf.contrib.slim
 
-from carla.agent import Agent
-from carla.carla_server_pb2 import Control
+import carla
+from agents.navigation.basic_agent import BasicAgent
 from agents.imitation.imitation_learning_network import load_imitation_learning_network
 
 
-class ImitationLearning(Agent):
+class ImitationLearningAgent(BasicAgent):
 
-    def __init__(self, city_name, avoid_stopping, memory_fraction=0.25, image_cut=[115, 510]):
+    def __init__(self, vehicle, city_name, avoid_stopping, memory_fraction=0.25, image_cut=[115, 510]):
 
-        Agent.__init__(self)
+        super().__init__(vehicle)
 
         self.dropout_vec = [1.0] * 8 + [0.7] * 2 + [0.5] * 2 + [0.5] * 1 + [0.5, 1.] * 5
 
@@ -117,7 +117,7 @@ class ImitationLearning(Agent):
         if speed > 10.0 and brake == 0.0:
             acc = 0.0
 
-        control = Control()
+        control = carla.VehicleControl()
         control.steer = steer
         control.throttle = acc
         control.brake = brake
