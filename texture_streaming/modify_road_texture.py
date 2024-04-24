@@ -1,13 +1,6 @@
 # Road_Road_Town10HD10
 
 # import modules
-import sys
-try:
-    sys.path.append('/home/karenli/carla/PythonAPI/carla/dist/carla-0.9.14-py3.8-linux-x86_64.egg')
-except IndexError:
-    print('Error: CARLA PythonAPI not found.')
-    pass
-
 import carla
 import time, random
 from PIL import Image
@@ -16,6 +9,7 @@ from PIL import Image
 image = Image.open('textures/T_Asphalt05_d.BMP')
 height = image.size[1]
 width = image.size[0]
+print("Image size: ", width, "x", height)
 
 # Connect to client
 client = carla.Client('127.0.0.1', 2000)
